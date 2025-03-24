@@ -1,54 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  font: "Montserrat";
-}
-/*
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+* {
+  font-family: 'Montserrat', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-*/
-/* App.css */
 .App {
-  font-family: Arial, sans-serif;
   padding: 20px;
 }
-
 
 .todo-form input,
 .todo-form select,
@@ -57,18 +22,22 @@
   padding: 10px;
 }
 
+/* Updated todo list styles for horizontal alignment */
 .todo-list {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap; /* Allows items to move to the next line */
+  justify-content: center; /* Centers items */
+  gap: 20px; /* Adds space between cards */
+  max-width: 100%; /* Ensures it fills the container */
 }
 
+/* Updated todo card styles for responsive layout */
 .todo-card {
+  flex: 1 1 calc(33.333% - 40px); /* 3 cards per row on large screens */
+  max-width: 300px; /* Prevents stretching */
   background-color: #222;
   padding: 15px;
-  margin: 10px;
   border-radius: 8px;
-  width: auto;
   transition: background-color 0.3s ease-in-out, opacity 0.3s;
 }
 
@@ -82,6 +51,19 @@
 .todo-card.completed p {
   text-decoration: line-through;
   color: #bbb; /* Light gray text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .todo-card {
+    flex: 1 1 calc(50% - 40px); /* 2 cards per row on medium screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .todo-card {
+    flex: 1 1 100%; /* Full width on small screens */
+  }
 }
 
 h2 {
