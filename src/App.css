@@ -15,6 +15,15 @@
   padding: 20px;
 }
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: url('./assets/background2.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
 .todo-form input,
 .todo-form select,
 .todo-form button {

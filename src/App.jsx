@@ -162,7 +162,7 @@ function App() {
       <Auth />
       {user ? (
         <div>
-          <h1>My To Do List</h1>
+          <h1>My Note List</h1>
           <div className="todo-form">
             <input placeholder="Todo Name" value={newTodoName} onChange={(e) => setNewTodoName(e.target.value)} />
             <input placeholder="Todo Description" value={newTodoDesc} onChange={(e) => setNewTodoDesc(e.target.value)} />
