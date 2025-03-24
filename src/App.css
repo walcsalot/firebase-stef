@@ -4,6 +4,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font: "Montserrat";
 }
 /*
 .logo {
@@ -121,4 +122,14 @@ button {
 .delete-btn {
   background-color: red;
   color: white;
+}
+
+.edit-btn {
+  background-color: #28a745; /* Green */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 5px;
 }
