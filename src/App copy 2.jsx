@@ -5,8 +5,8 @@ import { db, auth } from "./config/firebase";
 import { getDocs, collection, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Footer from "./Components/Footer";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles
 
 function App() {
   const [todoList, setTodoList] = useState([]);
@@ -37,12 +37,6 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      autoCompleteExpiredTodos();
-    }
-  }, [todoList, user]);
-
   const getTodoList = async (userId) => {
     try {
       const q = query(todoListCollectionRef, where("userId", "==", userId));
@@ -50,12 +44,13 @@ function App() {
       setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error("Error fetching todos: ", err);
+      toast.error("Failed to load todos.");
     }
   };
 
   const onSubmitTodo = async () => {
-    if (!user) return alert("You must be logged in to add a todo.");
-    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return alert("Fill in all fields.");
+    if (!user) return toast.error("You must be logged in to add a todo.");
+    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return toast.error("Fill in all fields.");
 
     try {
       await addDoc(todoListCollectionRef, {
@@ -69,7 +64,7 @@ function App() {
         userId: user.uid,
       });
 
-      toast.success("List added successfully!");
+      toast.success("Todo added successfully!");
       setNewTodoName("");
       setNewTodoDesc("");
       setNewTodoExpiry("");
@@ -77,8 +72,8 @@ function App() {
       setNewTodoCategory("Work");
       getTodoList(user.uid);
     } catch (err) {
-      console.error("Error adding List: ", err);
-      toast.error("Failed to add List.");
+      console.error("Error adding todo: ", err);
+      toast.error("Failed to add todo.");
     }
   };
 
@@ -88,7 +83,7 @@ function App() {
       toast.success(completed ? "List marked as incomplete!" : "List completed!");
       getTodoList(user.uid);
     } catch (err) {
-      console.error("Error updating List: ", err);
+      console.error("Error updating todo: ", err);
       toast.error("Failed to update List.");
     }
   };
@@ -96,11 +91,11 @@ function App() {
   const deleteTodo = async (id) => {
     try {
       await deleteDoc(doc(db, "todos", id));
-      toast.success("List deleted successfully!");
+      toast.success("Todo deleted successfully!");
       getTodoList(user.uid);
     } catch (err) {
-      console.error("Error deleting List: ", err);
-      toast.error("Failed to delete List.");
+      console.error("Error deleting todo: ", err);
+      toast.error("Failed to delete todo.");
     }
   };
 
@@ -123,12 +118,12 @@ function App() {
         category: editCategory,
       });
 
-      toast.success("List updated successfully!");
+      toast.success("Todo updated successfully!");
       setEditingTodo(null);
       getTodoList(user.uid);
     } catch (err) {
-      console.error("Error updating List: ", err);
-      toast.error("Failed to update List.");
+      console.error("Error updating todo: ", err);
+      toast.error("Failed to update todo.");
     }
   };
 
@@ -136,33 +131,12 @@ function App() {
     setEditingTodo(null);
   };
 
-  const autoCompleteExpiredTodos = async () => {
-    const now = new Date(); // Get current date
-    const expiredTodos = todoList.filter(
-      (todo) => new Date(todo.expiryDate) < now && !todo.completed
-    );
-
-    for (const todo of expiredTodos) {
-      try {
-        await updateDoc(doc(db, "todos", todo.id), { completed: true });
-        toast.info(`"${todo.name}" was auto-completed (past expiry).`);
-      } catch (err) {
-        console.error("Error auto-completing todo: ", err);
-      }
-    }
-
-    if (expiredTodos.length > 0) {
-      getTodoList(user.uid);
-    }
-  };
-
   return (
     <div className="app">
-      <ToastContainer />
       <Auth />
       {user ? (
         <div>
-          <h1>My To Do List</h1>
+          <h1>My Todo List</h1>
           <div className="todo-form">
             <input placeholder="Todo Name" value={newTodoName} onChange={(e) => setNewTodoName(e.target.value)} />
             <input placeholder="Todo Description" value={newTodoDesc} onChange={(e) => setNewTodoDesc(e.target.value)} />
@@ -224,6 +198,7 @@ function App() {
       ) : (
         <p>Please log in to view and manage your todo list.</p>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
       <Footer />
     </div>
   );
