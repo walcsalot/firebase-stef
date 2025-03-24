@@ -5,6 +5,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  height: 100vh;
 }
 
 * {
@@ -43,7 +44,7 @@ body, html {
 /* Updated todo card styles for responsive layout */
 .todo-card {
   flex: 1 1 calc(33.333% - 40px); /* 3 cards per row on large screens */
-  max-width: 300px; /* Prevents stretching */
+  max-width: auto; /* Prevents stretching */
   background-color: #222;
   padding: 15px;
   border-radius: 8px;
@@ -123,4 +124,16 @@ button {
   cursor: pointer;
   border-radius: 5px;
   margin-right: 5px;
+}
+
+.sorting-controls {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sorting-controls select {
+  padding: 5px;
+  font-size: 16px;
 }

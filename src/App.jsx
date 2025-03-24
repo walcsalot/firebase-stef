@@ -23,6 +23,7 @@ function App() {
   const [editCategory, setEditCategory] = useState("Work");
   const [user, setUser] = useState(null);
   const todoListCollectionRef = collection(db, "todos");
+  const [sortBy, setSortBy] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -43,6 +44,19 @@ function App() {
     }
   }, [todoList, user]);
 
+  const getSortedTodos = () => {
+    let sortedTodos = [...todoList];
+  
+    if (sortBy === "priority") {
+      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+      sortedTodos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    } else if (sortBy === "category") {
+      sortedTodos.sort((a, b) => a.category.localeCompare(b.category));
+    }
+  
+    return sortedTodos;
+  };
+  
   const getTodoList = async (userId) => {
     try {
       const q = query(todoListCollectionRef, where("userId", "==", userId));
@@ -163,6 +177,7 @@ function App() {
       {user ? (
         <div>
           <h1>My Note List</h1>
+          
           <div className="todo-form">
             <input placeholder="Todo Name" value={newTodoName} onChange={(e) => setNewTodoName(e.target.value)} />
             <input placeholder="Todo Description" value={newTodoDesc} onChange={(e) => setNewTodoDesc(e.target.value)} />
@@ -179,9 +194,18 @@ function App() {
             </select>
             <button onClick={onSubmitTodo}>Add Todo</button>
           </div>
+          
+          <div className="sorting-controls">
+            <label>Sort By:</label>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="">None</option>
+              <option value="priority">Priority</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
 
           <div className="todo-list">
-            {todoList.map((todo) => (
+            {getSortedTodos().map((todo) => (
               <div key={todo.id} className={`todo-card ${todo.completed ? "completed" : ""}`}>
                 {editingTodo === todo.id ? (
                   <>
