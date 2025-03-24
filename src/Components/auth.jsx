@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { auth, googleProvider } from "../config/firebase";
+import "../App.css";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -18,11 +19,10 @@ export const Auth = () => {
       alert("Account created successfully!");
     } catch (err) {
       console.error(err);
-      alert(err.message); // Show error message to the user
+      alert(err.message);
     }
   };
 
-  // Sign in with email and password
   const signIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -40,7 +40,7 @@ export const Auth = () => {
       alert("Signed in with Google successfully!");
     } catch (err) {
       console.error(err);
-      alert(err.message); // Show error message to the user
+      alert(err.message);
     }
   };
 
@@ -51,7 +51,7 @@ export const Auth = () => {
       alert("Logged out successfully!");
     } catch (err) {
       console.error(err);
-      alert(err.message); // Show error message to the user
+      alert(err.message);
     }
   };
 
@@ -67,8 +67,8 @@ export const Auth = () => {
         type="password"
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={signUp}>Sign Up</button>
       <button onClick={signIn}>Sign In</button>
+      <button onClick={signUp}>Sign Up</button>
       <button onClick={signInWithGoogle}>Sign In with Google</button>
       <button onClick={logout}>Log Out</button>
 

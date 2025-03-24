@@ -44,7 +44,7 @@ body, html {
 /* Updated todo card styles for responsive layout */
 .todo-card {
   flex: 1 1 calc(33.333% - 40px); /* 3 cards per row on large screens */
-  max-width: 300px; /* Prevents stretching */
+  max-width: auto; /* Prevents stretching */
   background-color: #222;
   padding: 15px;
   border-radius: 8px;
@@ -136,49 +136,4 @@ button {
 .sorting-controls select {
   padding: 5px;
   font-size: 16px;
-}
-
-.toast-container-custom {
-  width: auto !important;
-  max-width: 90% !important;
-}
-
-/* Custom toast styles */
-.toast-custom {
-  font-size: 14px !important;
-  padding: 8px !important;
-  min-height: auto !important;
-  margin-bottom: 8px !important;
-  border-radius: 4px !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
-
-.toast-body-custom {
-  padding: 6px !important;
-  margin: 0 !important;
-}
-
-/* Media queries for mobile devices */
-@media (max-width: 768px) {
-  .toast-container-custom {
-    width: 90% !important;
-    max-width: 90% !important;
-    padding: 0 !important;
-  }
-
-  .toast-custom {
-    font-size: 13px !important;
-    padding: 6px !important;
-  }
-
-  .Toastify__toast-icon {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  .Toastify__close-button {
-    padding: 0 !important;
-    width: 14px !important;
-    height: 14px !important;
-  }
 }

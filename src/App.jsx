@@ -1,75 +1,87 @@
-import { useState, useEffect } from "react";
-import "./App.css"; // Import the CSS file
-import { Auth } from "./Components/auth";
-import { db, auth } from "./config/firebase";
-import { getDocs, collection, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import Footer from "./Components/Footer";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react"
+import "./App.css" // Import the CSS file
+import { Auth } from "./Components/auth"
+import { db, auth } from "./config/firebase"
+import { getDocs, collection, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore"
+import { onAuthStateChanged } from "firebase/auth"
+import Footer from "./Components/Footer"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
-  const [newTodoName, setNewTodoName] = useState("");
-  const [newTodoDesc, setNewTodoDesc] = useState("");
-  const [newTodoExpiry, setNewTodoExpiry] = useState("");
-  const [newTodoPriority, setNewTodoPriority] = useState("Low");
-  const [newTodoCategory, setNewTodoCategory] = useState("Work");
-  const [editingTodo, setEditingTodo] = useState(null);
-  const [editName, setEditName] = useState("");
-  const [editDesc, setEditDesc] = useState("");
-  const [editExpiry, setEditExpiry] = useState("");
-  const [editPriority, setEditPriority] = useState("Low");
-  const [editCategory, setEditCategory] = useState("Work");
-  const [user, setUser] = useState(null);
-  const todoListCollectionRef = collection(db, "todos");
-  const [sortBy, setSortBy] = useState("");
+  const [todoList, setTodoList] = useState([])
+  const [newTodoName, setNewTodoName] = useState("")
+  const [newTodoDesc, setNewTodoDesc] = useState("")
+  const [newTodoExpiry, setNewTodoExpiry] = useState("")
+  const [newTodoPriority, setNewTodoPriority] = useState("Low")
+  const [newTodoCategory, setNewTodoCategory] = useState("Work")
+  const [editingTodo, setEditingTodo] = useState(null)
+  const [editName, setEditName] = useState("")
+  const [editDesc, setEditDesc] = useState("")
+  const [editExpiry, setEditExpiry] = useState("")
+  const [editPriority, setEditPriority] = useState("Low")
+  const [editCategory, setEditCategory] = useState("Work")
+  const [user, setUser] = useState(null)
+  const todoListCollectionRef = collection(db, "todos")
+  const [sortBy, setSortBy] = useState("newest")
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser)
       if (currentUser) {
-        getTodoList(currentUser.uid);
+        getTodoList(currentUser.uid)
       } else {
-        setTodoList([]);
+        setTodoList([])
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe()
+  }, [])
 
   useEffect(() => {
     if (user) {
-      autoCompleteExpiredTodos();
+      autoCompleteExpiredTodos()
     }
-  }, [todoList, user]);
+  }, [todoList, user])
 
   const getSortedTodos = () => {
-    let sortedTodos = [...todoList];
-  
+    const sortedTodos = [...todoList]
+
     if (sortBy === "priority") {
-      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
-      sortedTodos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+      const priorityOrder = { High: 1, Medium: 2, Low: 3 }
+      sortedTodos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
     } else if (sortBy === "category") {
-      sortedTodos.sort((a, b) => a.category.localeCompare(b.category));
+      sortedTodos.sort((a, b) => a.category.localeCompare(b.category))
+    } else if (sortBy === "newest") {
+      sortedTodos.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
     }
-  
-    return sortedTodos;
-  };
-  
+
+    return sortedTodos
+  }
+
   const getTodoList = async (userId) => {
     try {
-      const q = query(todoListCollectionRef, where("userId", "==", userId));
-      const data = await getDocs(q);
-      setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      const q = query(todoListCollectionRef, where("userId", "==", userId))
+      const data = await getDocs(q)
+      setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
     } catch (err) {
-      console.error("Error fetching todos: ", err);
+      console.error("Error fetching todos: ", err)
     }
-  };
+  }
 
   const onSubmitTodo = async () => {
-    if (!user) return alert("You must be logged in to add a todo.");
-    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return alert("Fill in all fields.");
+    if (!user) return alert("You must be logged in to add a todo.")
+    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return alert("Fill in all fields.")
 
     try {
       await addDoc(todoListCollectionRef, {
@@ -81,51 +93,51 @@ function App() {
         priority: newTodoPriority,
         category: newTodoCategory,
         userId: user.uid,
-      });
+      })
 
-      toast.success("List added successfully!");
-      setNewTodoName("");
-      setNewTodoDesc("");
-      setNewTodoExpiry("");
-      setNewTodoPriority("Low");
-      setNewTodoCategory("Work");
-      getTodoList(user.uid);
+      toast.success("List added successfully!")
+      setNewTodoName("")
+      setNewTodoDesc("")
+      setNewTodoExpiry("")
+      setNewTodoPriority("Low")
+      setNewTodoCategory("Work")
+      getTodoList(user.uid)
     } catch (err) {
-      console.error("Error adding List: ", err);
-      toast.error("Failed to add List.");
+      console.error("Error adding List: ", err)
+      toast.error("Failed to add List.")
     }
-  };
+  }
 
   const toggleTodoCompletion = async (id, completed) => {
     try {
-      await updateDoc(doc(db, "todos", id), { completed: !completed });
-      toast.success(completed ? "List marked as incomplete!" : "List completed!");
-      getTodoList(user.uid);
+      await updateDoc(doc(db, "todos", id), { completed: !completed })
+      toast.success(completed ? "List marked as incomplete!" : "List completed!")
+      getTodoList(user.uid)
     } catch (err) {
-      console.error("Error updating List: ", err);
-      toast.error("Failed to update List.");
+      console.error("Error updating List: ", err)
+      toast.error("Failed to update List.")
     }
-  };
+  }
 
   const deleteTodo = async (id) => {
     try {
-      await deleteDoc(doc(db, "todos", id));
-      toast.success("List deleted successfully!");
-      getTodoList(user.uid);
+      await deleteDoc(doc(db, "todos", id))
+      toast.success("List deleted successfully!")
+      getTodoList(user.uid)
     } catch (err) {
-      console.error("Error deleting List: ", err);
-      toast.error("Failed to delete List.");
+      console.error("Error deleting List: ", err)
+      toast.error("Failed to delete List.")
     }
-  };
+  }
 
   const startEditing = (todo) => {
-    setEditingTodo(todo.id);
-    setEditName(todo.name);
-    setEditDesc(todo.description);
-    setEditExpiry(todo.expiryDate.split("T")[0]); // Format YYYY-MM-DD
-    setEditPriority(todo.priority);
-    setEditCategory(todo.category);
-  };
+    setEditingTodo(todo.id)
+    setEditName(todo.name)
+    setEditDesc(todo.description)
+    setEditExpiry(todo.expiryDate.split("T")[0]) // Format YYYY-MM-DD
+    setEditPriority(todo.priority)
+    setEditCategory(todo.category)
+  }
 
   const saveEdit = async (id) => {
     try {
@@ -135,52 +147,72 @@ function App() {
         expiryDate: new Date(editExpiry).toISOString(),
         priority: editPriority,
         category: editCategory,
-      });
+      })
 
-      toast.success("List updated successfully!");
-      setEditingTodo(null);
-      getTodoList(user.uid);
+      toast.success("List updated successfully!")
+      setEditingTodo(null)
+      getTodoList(user.uid)
     } catch (err) {
-      console.error("Error updating List: ", err);
-      toast.error("Failed to update List.");
+      console.error("Error updating List: ", err)
+      toast.error("Failed to update List.")
     }
-  };
+  }
 
   const cancelEdit = () => {
-    setEditingTodo(null);
-  };
+    setEditingTodo(null)
+  }
 
   const autoCompleteExpiredTodos = async () => {
-    const now = new Date(); // Get current date
-    const expiredTodos = todoList.filter(
-      (todo) => new Date(todo.expiryDate) < now && !todo.completed
-    );
+    const now = new Date() // Get current date
+    const expiredTodos = todoList.filter((todo) => new Date(todo.expiryDate) < now && !todo.completed)
 
     for (const todo of expiredTodos) {
       try {
-        await updateDoc(doc(db, "todos", todo.id), { completed: true });
-        toast.info(`"${todo.name}" was auto-completed (past expiry).`);
+        await updateDoc(doc(db, "todos", todo.id), { completed: true })
+        toast.info(`"${todo.name}" was auto-completed (past expiry).`)
       } catch (err) {
-        console.error("Error auto-completing todo: ", err);
+        console.error("Error auto-completing todo: ", err)
       }
     }
 
     if (expiredTodos.length > 0) {
-      getTodoList(user.uid);
+      getTodoList(user.uid)
     }
-  };
+  }
+
+  // Configure toast options based on device
+  const getToastPosition = () => {
+    return isMobile ? "bottom-center" : "top-right"
+  }
 
   return (
     <div className="app">
-      <ToastContainer />
+      <ToastContainer
+        position={getToastPosition()}
+        autoClose={3000}
+        hideProgressBar={isMobile}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        limit={3}
+        className="toast-container-custom"
+        toastClassName="toast-custom"
+        bodyClassName="toast-body-custom"
+      />
       <Auth />
       {user ? (
         <div>
-          <h1>My Note List</h1>
-          
           <div className="todo-form">
-            <input placeholder="Todo Name" value={newTodoName} onChange={(e) => setNewTodoName(e.target.value)} />
-            <input placeholder="Todo Description" value={newTodoDesc} onChange={(e) => setNewTodoDesc(e.target.value)} />
+            <input placeholder="List Name" value={newTodoName} onChange={(e) => setNewTodoName(e.target.value)} />
+            <input
+              placeholder="List Description"
+              value={newTodoDesc}
+              onChange={(e) => setNewTodoDesc(e.target.value)}
+            />
             <input type="date" value={newTodoExpiry} onChange={(e) => setNewTodoExpiry(e.target.value)} />
             <select value={newTodoPriority} onChange={(e) => setNewTodoPriority(e.target.value)}>
               <option value="Low">Low</option>
@@ -194,11 +226,13 @@ function App() {
             </select>
             <button onClick={onSubmitTodo}>Add Todo</button>
           </div>
-          
+
+          <h2>Note List</h2>
+
           <div className="sorting-controls">
             <label>Sort By:</label>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="">None</option>
+              <option value="newest">Newest First</option>
               <option value="priority">Priority</option>
               <option value="category">Category</option>
             </select>
@@ -231,14 +265,24 @@ function App() {
                       {todo.name} <span className={`priority ${todo.priority.toLowerCase()}`}>{todo.priority}</span>
                     </h2>
                     <p>{todo.description}</p>
-                    <p><strong>Date Added:</strong> {new Date(todo.dateAdded).toLocaleString()}</p>
-                    <p><strong>Expiry Date:</strong> {new Date(todo.expiryDate).toLocaleDateString()}</p>
-                    <p><strong>Category:</strong> {todo.category}</p>
+                    <p>
+                      <strong>Date Added:</strong> {new Date(todo.dateAdded).toLocaleString()}
+                    </p>
+                    <p>
+                      <strong>Expiry Date:</strong> {new Date(todo.expiryDate).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>Category:</strong> {todo.category}
+                    </p>
                     <button onClick={() => toggleTodoCompletion(todo.id, todo.completed)}>
                       {todo.completed ? "Mark as Incomplete" : "Mark as Complete"}
                     </button>
-                    <button className="edit-btn" onClick={() => startEditing(todo)}>Edit</button>
-                    <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>Delete</button>
+                    <button className="edit-btn" onClick={() => startEditing(todo)}>
+                      Edit
+                    </button>
+                    <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
@@ -250,7 +294,8 @@ function App() {
       )}
       <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
+
