@@ -1,87 +1,122 @@
-import { useState, useEffect } from "react"
-import "./App.css" // Import the CSS file
-import { Auth } from "./Components/auth"
-import { db, auth } from "./config/firebase"
-import { getDocs, collection, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore"
-import { onAuthStateChanged } from "firebase/auth"
-import Footer from "./Components/Footer"
-import { toast, ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { useState, useEffect } from "react";
+import "./App.css";
+import { Auth } from "./Components/auth";
+import { db, auth } from "./config/firebase";
+import { getDocs, collection, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import Footer from "./Components/Footer";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [todoList, setTodoList] = useState([])
-  const [newTodoName, setNewTodoName] = useState("")
-  const [newTodoDesc, setNewTodoDesc] = useState("")
-  const [newTodoExpiry, setNewTodoExpiry] = useState("")
-  const [newTodoPriority, setNewTodoPriority] = useState("Low")
-  const [newTodoCategory, setNewTodoCategory] = useState("Work")
-  const [editingTodo, setEditingTodo] = useState(null)
-  const [editName, setEditName] = useState("")
-  const [editDesc, setEditDesc] = useState("")
-  const [editExpiry, setEditExpiry] = useState("")
-  const [editPriority, setEditPriority] = useState("Low")
-  const [editCategory, setEditCategory] = useState("Work")
-  const [user, setUser] = useState(null)
-  const todoListCollectionRef = collection(db, "todos")
-  const [sortBy, setSortBy] = useState("newest")
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+  const [todoList, setTodoList] = useState([]);
+  const [newTodoName, setNewTodoName] = useState("");
+  const [newTodoDesc, setNewTodoDesc] = useState("");
+  const [newTodoExpiry, setNewTodoExpiry] = useState("");
+  const [newTodoPriority, setNewTodoPriority] = useState("Low");
+  const [newTodoCategory, setNewTodoCategory] = useState("Work");
+  const [editingTodo, setEditingTodo] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editExpiry, setEditExpiry] = useState("");
+  const [editPriority, setEditPriority] = useState("Low");
+  const [editCategory, setEditCategory] = useState("Work");
+  const [user, setUser] = useState(null);
+  const todoListCollectionRef = collection(db, "todos");
+  const [sortBy, setSortBy] = useState("newest");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Service Worker Registration for Notifications
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.log('Service Worker registration failed', err));
+    }
+  }, []);
+
+  // Notification Permission Check
+  useEffect(() => {
+    if (!("Notification" in window)) {
+      console.log("This browser does not support notifications");
+    } else {
+      console.log("Notification permission is:", Notification.permission);
+    }
+  }, []);
+
+  const showNotification = (title, body) => {
+    if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notification");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      new Notification(title, { body, icon: "./assets/react.svg" });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification(title, { body, icon: "./assets/react.svg" });
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768)
-    }
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
+      setUser(currentUser);
       if (currentUser) {
-        getTodoList(currentUser.uid)
+        getTodoList(currentUser.uid);
       } else {
-        setTodoList([])
+        setTodoList([]);
       }
-    })
+    });
 
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (user) {
-      autoCompleteExpiredTodos()
+      autoCompleteExpiredTodos();
     }
-  }, [todoList, user])
+  }, [todoList, user]);
 
   const getSortedTodos = () => {
-    const sortedTodos = [...todoList]
+    const sortedTodos = [...todoList];
 
     if (sortBy === "priority") {
-      const priorityOrder = { High: 1, Medium: 2, Low: 3 }
-      sortedTodos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+      sortedTodos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
     } else if (sortBy === "category") {
-      sortedTodos.sort((a, b) => a.category.localeCompare(b.category))
+      sortedTodos.sort((a, b) => a.category.localeCompare(b.category));
     } else if (sortBy === "newest") {
-      sortedTodos.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
+      sortedTodos.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
     }
 
-    return sortedTodos
-  }
+    return sortedTodos;
+  };
 
   const getTodoList = async (userId) => {
     try {
-      const q = query(todoListCollectionRef, where("userId", "==", userId))
-      const data = await getDocs(q)
-      setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      const q = query(todoListCollectionRef, where("userId", "==", userId));
+      const data = await getDocs(q);
+      setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
-      console.error("Error fetching todos: ", err)
+      console.error("Error fetching todos: ", err);
     }
-  }
+  };
 
   const onSubmitTodo = async () => {
-    if (!user) return alert("You must be logged in to add a todo.")
-    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return alert("Fill in all fields.")
+    if (!user) return alert("You must be logged in to add a todo.");
+    if (!newTodoName.trim() || !newTodoDesc.trim() || !newTodoExpiry) return alert("Fill in all fields.");
 
     try {
       await addDoc(todoListCollectionRef, {
@@ -93,51 +128,57 @@ function App() {
         priority: newTodoPriority,
         category: newTodoCategory,
         userId: user.uid,
-      })
+      });
 
-      toast.success("List added successfully!")
-      setNewTodoName("")
-      setNewTodoDesc("")
-      setNewTodoExpiry("")
-      setNewTodoPriority("Low")
-      setNewTodoCategory("Work")
-      getTodoList(user.uid)
+      toast.success("List added successfully!");
+      setNewTodoName("");
+      setNewTodoDesc("");
+      setNewTodoExpiry("");
+      setNewTodoPriority("Low");
+      setNewTodoCategory("Work");
+      getTodoList(user.uid);
     } catch (err) {
-      console.error("Error adding List: ", err)
-      toast.error("Failed to add List.")
+      console.error("Error adding List: ", err);
+      toast.error("Failed to add List.");
     }
-  }
+  };
 
   const toggleTodoCompletion = async (id, completed) => {
     try {
-      await updateDoc(doc(db, "todos", id), { completed: !completed })
-      toast.success(completed ? "List marked as incomplete!" : "List completed!")
-      getTodoList(user.uid)
+      await updateDoc(doc(db, "todos", id), { completed: !completed });
+      toast.success(completed ? "List marked as incomplete!" : "List completed!");
+      
+      if (!completed) {
+        const todo = todoList.find(t => t.id === id);
+        showNotification("List Completed", `"${todo.name}" has been marked as complete!`);
+      }
+      
+      getTodoList(user.uid);
     } catch (err) {
-      console.error("Error updating List: ", err)
-      toast.error("Failed to update List.")
+      console.error("Error updating List: ", err);
+      toast.error("Failed to update List.");
     }
-  }
+  };
 
   const deleteTodo = async (id) => {
     try {
-      await deleteDoc(doc(db, "todos", id))
-      toast.success("List deleted successfully!")
-      getTodoList(user.uid)
+      await deleteDoc(doc(db, "todos", id));
+      toast.success("List deleted successfully!");
+      getTodoList(user.uid);
     } catch (err) {
-      console.error("Error deleting List: ", err)
-      toast.error("Failed to delete List.")
+      console.error("Error deleting List: ", err);
+      toast.error("Failed to delete List.");
     }
-  }
+  };
 
   const startEditing = (todo) => {
-    setEditingTodo(todo.id)
-    setEditName(todo.name)
-    setEditDesc(todo.description)
-    setEditExpiry(todo.expiryDate.split("T")[0]) // Format YYYY-MM-DD
-    setEditPriority(todo.priority)
-    setEditCategory(todo.category)
-  }
+    setEditingTodo(todo.id);
+    setEditName(todo.name);
+    setEditDesc(todo.description);
+    setEditExpiry(todo.expiryDate.split("T")[0]);
+    setEditPriority(todo.priority);
+    setEditCategory(todo.category);
+  };
 
   const saveEdit = async (id) => {
     try {
@@ -147,43 +188,43 @@ function App() {
         expiryDate: new Date(editExpiry).toISOString(),
         priority: editPriority,
         category: editCategory,
-      })
+      });
 
-      toast.success("List updated successfully!")
-      setEditingTodo(null)
-      getTodoList(user.uid)
+      toast.success("List updated successfully!");
+      setEditingTodo(null);
+      getTodoList(user.uid);
     } catch (err) {
-      console.error("Error updating List: ", err)
-      toast.error("Failed to update List.")
+      console.error("Error updating List: ", err);
+      toast.error("Failed to update List.");
     }
-  }
+  };
 
   const cancelEdit = () => {
-    setEditingTodo(null)
-  }
+    setEditingTodo(null);
+  };
 
   const autoCompleteExpiredTodos = async () => {
-    const now = new Date() // Get current date
-    const expiredTodos = todoList.filter((todo) => new Date(todo.expiryDate) < now && !todo.completed)
+    const now = new Date();
+    const expiredTodos = todoList.filter((todo) => new Date(todo.expiryDate) < now && !todo.completed);
 
     for (const todo of expiredTodos) {
       try {
-        await updateDoc(doc(db, "todos", todo.id), { completed: true })
-        toast.info(`"${todo.name}" was auto-completed (past expiry).`)
+        await updateDoc(doc(db, "todos", todo.id), { completed: true });
+        toast.info(`"${todo.name}" was auto-completed (past expiry).`);
+        showNotification("List Expired", `"${todo.name}" has been auto-completed as it's past its expiry date.`);
       } catch (err) {
-        console.error("Error auto-completing todo: ", err)
+        console.error("Error auto-completing todo: ", err);
       }
     }
 
     if (expiredTodos.length > 0) {
-      getTodoList(user.uid)
+      getTodoList(user.uid);
     }
-  }
+  };
 
-  // Configure toast options based on device
   const getToastPosition = () => {
-    return isMobile ? "bottom-center" : "top-right"
-  }
+    return isMobile ? "bottom-center" : "top-right";
+  };
 
   return (
     <div className="app">
@@ -294,8 +335,7 @@ function App() {
       )}
       <Footer />
     </div>
-  )
+  );
 }
 
-export default App
-
+export default App;
