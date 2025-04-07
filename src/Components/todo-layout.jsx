@@ -20,7 +20,7 @@ export const TodoLayout = ({ user, children }) => {
     <div className="app-content">
       <div className="app-header">
       <img src="../Logo.svg" height="50px" alt="Note List App Logo" />
-        <h1>Note List</h1>
+        <h1>Dashboard</h1>
         <Auth isLoggedIn={true} />
       </div>
       <div className="main-content">{children}</div>
