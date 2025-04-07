@@ -97,7 +97,7 @@ function App() {
   const renderTodoContent = () => (
     <>
       {renderAddTodoForm()}
-      <h2>Note List</h2>
+      <h2>Your Notes</h2>
       {renderSortingControls()}
       <div className="todo-list">{getSortedTodos().map((todo) => renderTodoItem(todo))}</div>
     </>

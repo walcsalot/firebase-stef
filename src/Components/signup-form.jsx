@@ -45,7 +45,6 @@ export const SignupForm = ({ onSuccess }) => {
   return (
     <div className="auth-form-container">
       <h2>Create Account</h2>
-      <p className="auth-subtitle">Sign up to start managing your todos</p>
 
       <form onSubmit={signUp} className="auth-form">
         <div className="form-group">

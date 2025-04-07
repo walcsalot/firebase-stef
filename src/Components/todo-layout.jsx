@@ -7,8 +7,7 @@ export const TodoLayout = ({ user, children }) => {
     return (
       <div className="login-page">
         <div className="login-logo">
-          <h1>Todo List App</h1>
-          <p>Organize your tasks efficiently</p>
+        <img src="../Logo.svg" height="100px" alt="Note List App Logo" />
         </div>
         <Auth isLoggedIn={false} />
         <Footer />
@@ -20,7 +19,8 @@ export const TodoLayout = ({ user, children }) => {
   return (
     <div className="app-content">
       <div className="app-header">
-        <h1>Todo List App</h1>
+      <img src="../Logo.svg" height="50px" alt="Note List App Logo" />
+        <h1>Note List</h1>
         <Auth isLoggedIn={true} />
       </div>
       <div className="main-content">{children}</div>

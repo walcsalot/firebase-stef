@@ -22,6 +22,7 @@ html {
   padding: 2rem;
   text-align: center;
   min-height: 100vh;
+  height: 100vh;
 }
 
 /* ===== APP LAYOUT ===== */
@@ -145,6 +146,7 @@ html {
 }
 
 .auth-form {
+  width: 350px;
   margin-bottom: 1.5rem;
 }
 

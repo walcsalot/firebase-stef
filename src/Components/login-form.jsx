@@ -44,9 +44,7 @@ export const LoginForm = () => {
 
   return (
     <div className="auth-form-container">
-      <h2>Welcome Back</h2>
-      <p className="auth-subtitle">Login to access your todo lists</p>
-
+      <h2>Welcome to Note List!</h2>
       <form onSubmit={signIn} className="auth-form">
         <div className="form-group">
           <label htmlFor="email">Email</label>
