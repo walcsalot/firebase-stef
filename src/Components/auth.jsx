@@ -1,10 +1,9 @@
-"use client"
-
 import { auth } from "../config/firebase"
 import { signOut } from "firebase/auth"
 import { useState } from "react"
 import { LoginForm } from "./login-form"
 import { SignupForm } from "./signup-form"
+import ThemeToggle from "./theme-toggle"
 
 export const Auth = ({ isLoggedIn }) => {
   const [authMode, setAuthMode] = useState("login") // "login" or "signup"
@@ -17,10 +16,11 @@ export const Auth = ({ isLoggedIn }) => {
     }
   }
 
-  // If user is logged in, only show logout button
+  // If user is logged in, show logout button and theme toggle
   if (isLoggedIn) {
     return (
-      <div className="logout-container">
+      <div className="header-controls">
+        <ThemeToggle />
         <button onClick={logOut} className="logout-button">
           Logout
         </button>

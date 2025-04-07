@@ -1,19 +1,134 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
 
+/* ===== CSS VARIABLES FOR THEMING ===== */
+:root {
+  /* Default dark theme variables */
+  --bg-color: #222;
+  --text-color: #fff;
+  --card-bg: #333;
+  --card-completed-bg: #2a2a2a;
+  --card-text: #fff;
+  --card-completed-text: #aaa;
+  --header-bg: #4a90e2;
+  --header-text: #fff;
+  --form-bg: transparent;
+  --form-input-bg: #ffffffe6;
+  --form-input-text: #333;
+  --form-button-bg: #4a90e2;
+  --form-button-text: #fff;
+  --form-button-hover: #3a80d2;
+  --sort-bg: #333;
+  --sort-text: #fff;
+  --sort-select-bg: #222;
+  --sort-select-text: #fff;
+  --sort-select-border: #444;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a80d2;
+  --delete-btn-bg: #e53935;
+  --delete-btn-hover: #c62828;
+  --edit-btn-bg: #30ca56;
+  --edit-btn-hover: #2c9446;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --auth-bg: white;
+  --auth-text: #333;
+  --auth-subtitle: #666;
+  --auth-input-border: #ddd;
+  --auth-tab-active: #4a90e2;
+  --auth-tab-hover: #f5f5f5;
+  --auth-divider: #eaeaea;
+}
+
+/* Light theme variables */
+.light-theme {
+  --bg-color: #d3d3d3;
+  --text-color: #333;
+  --card-bg: #f7f7f7;
+  --card-completed-bg: #dfe3ee;
+  --card-text: #333;
+  --card-completed-text: #888;
+  --header-bg: #333;
+  --header-text: #fff;
+  --form-bg: transparent;
+  --form-input-bg: #f7f7f7;
+  --form-input-text: #333;
+  --form-input-border: #333;
+  --form-button-bg: #4a90e2;
+  --form-button-text: #fff;
+  --form-button-hover: #3a80d2;
+  --sort-bg: #333;
+  --sort-text: #fff;
+  --sort-select-bg: #f0f0f0;
+  --sort-select-text: #333;
+  --sort-select-border: #333;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a80d2;
+  --delete-btn-bg: #e53935;
+  --delete-btn-hover: #c62828;
+  --edit-btn-bg: #30ca56;
+  --edit-btn-hover: #2db64f;
+  --shadow-color: rgba(0, 0, 0, 0.400);
+  --auth-bg: #333;
+  --auth-text: #f7f7f7;
+  --auth-subtitle: #666;
+  --auth-input-border: #ddd;
+  --auth-tab-active: #4a90e2;
+  --auth-tab-hover: #333;
+  --auth-divider: #eaeaea;
+}
+
+/* Dark theme variables */
+.dark-theme {
+  --bg-color: #222;
+  --text-color: #fff;
+  --card-bg: #333;
+  --card-completed-bg: #2a2a2a;
+  --card-text: #fff;
+  --card-completed-text: #aaa;
+  --header-bg: #d3d3d3;
+  --header-text: #333;
+  --form-bg: transparent;
+  --form-input-bg: #ffffffe6;
+  --form-input-text: #333;
+  --form-button-bg: #4a90e2;
+  --form-button-text: #fff;
+  --form-button-hover: #3a80d2;
+  --sort-bg: #d3d3d3;
+  --sort-text: #333;
+  --sort-select-bg: #222;
+  --sort-select-text: #fff;
+  --sort-select-border: #444;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a80d2;
+  --delete-btn-bg: #e53935;
+  --delete-btn-hover: #c62828;
+  --edit-btn-bg: #29a748;
+  --edit-btn-hover: #289e46;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --auth-bg: #f7f7f7;
+  --auth-text: #333;
+  --auth-subtitle: #666;
+  --auth-input-border: #ddd;
+  --auth-tab-active: #4a90e2;
+  --auth-tab-hover: #f5f5f5;
+  --auth-divider: #eaeaea;
+}
+
 /* ===== BASE STYLES ===== */
 * {
   font-family: "Montserrat", sans-serif;
   box-sizing: border-box;
 }
 
+html,
 body,
-html {
+#root {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  background-color: #222;
-  color: #fff;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -22,7 +137,20 @@ html {
   padding: 2rem;
   text-align: center;
   min-height: 100vh;
-  height: 100vh;
+}
+
+/* Ensure full coverage of background */
+html::before,
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-color);
+  z-index: -1;
+  transition: background-color 0.3s ease;
 }
 
 /* ===== APP LAYOUT ===== */
@@ -30,12 +158,16 @@ html {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
 .app-content {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
 .main-content {
@@ -44,6 +176,8 @@ html {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
 /* ===== HEADER ===== */
@@ -52,18 +186,58 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #4a90e2;
-  color: white;
+  background-color: var(--header-bg);
+  color: var(--header-text);
   margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-color);
   border-radius: 0 0 8px 8px;
-  position: relative; /* Changed from fixed to relative */
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo img {
+  height: 32px;
+  width: auto;
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle-button {
+  background-color: transparent;
+  border: none;
+  color: var(--header-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.theme-toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle-button svg {
+  stroke: var(--header-text);
 }
 
 /* ===== LOGIN PAGE ===== */
@@ -74,7 +248,8 @@ html {
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background-color: transparent;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
 .login-logo {
@@ -84,31 +259,41 @@ html {
 
 .login-logo h1 {
   font-size: 2.5rem;
-  color: #4a90e2;
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
 }
 
 .login-logo p {
-  color: #fff;
+  color: var(--text-color);
   font-size: 1.1rem;
 }
 
 /* ===== AUTH COMPONENTS ===== */
 .auth-container {
-  background-color: white;
+  background-color: var(--auth-bg);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px var(--shadow-color);
   width: 100%;
   max-width: 450px;
   margin-bottom: 2rem;
   overflow: hidden;
 }
 
+.auth-logo {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-logo img {
+  height: 60px;
+  width: auto;
+}
+
 .auth-tabs {
   display: flex;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--auth-divider);
 }
 
 .auth-tab {
@@ -118,35 +303,36 @@ html {
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #666;
+  color: var(--auth-subtitle);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .auth-tab.active {
-  color: #4a90e2;
-  border-bottom: 2px solid #4a90e2;
+  color: var(--auth-tab-active);
+  border-bottom: 2px solid var(--auth-tab-active);
 }
 
 .auth-tab:hover:not(.active) {
-  color: #333;
-  background-color: #f5f5f5;
+  color: var(--auth-text);
+  background-color: var(--auth-tab-hover);
 }
 
 .auth-form-container h2 {
   margin-top: 0;
   margin-bottom: 0.5rem;
   font-size: 1.75rem;
-  color: #333;
+  color: var(--auth-text);
+  text-align: center;
 }
 
 .auth-subtitle {
-  color: #666;
+  color: var(--auth-subtitle);
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .auth-form {
-  width: 350px;
   margin-bottom: 1.5rem;
 }
 
@@ -158,14 +344,14 @@ html {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #333;
+  color: var(--auth-text);
   text-align: left;
 }
 
 .form-hint {
   display: block;
   margin-top: 0.25rem;
-  color: #666;
+  color: var(--auth-subtitle);
   font-size: 0.8rem;
   text-align: left;
 }
@@ -173,7 +359,7 @@ html {
 .auth-form input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--auth-input-border);
   border-radius: 6px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
@@ -181,7 +367,7 @@ html {
 
 .auth-form input:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
@@ -202,12 +388,12 @@ html {
 }
 
 .primary-button {
-  background-color: #4a90e2;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .primary-button:hover:not(:disabled) {
-  background-color: #3a80d2;
+  background-color: var(--primary-hover);
 }
 
 .google-button {
@@ -217,11 +403,11 @@ html {
   gap: 0.5rem;
   background-color: white;
   color: #333;
-  border: 1px solid #ddd;
+  border: 1px solid var(--auth-input-border);
 }
 
 .google-button:hover:not(:disabled) {
-  background-color: #f5f5f5;
+  background-color: var(--auth-tab-hover);
 }
 
 .google-icon {
@@ -232,14 +418,14 @@ html {
   display: flex;
   align-items: center;
   margin: 1.5rem 0;
-  color: #666;
+  color: var(--auth-subtitle);
 }
 
 .auth-divider::before,
 .auth-divider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--auth-divider);
 }
 
 .auth-divider span {
@@ -247,14 +433,9 @@ html {
   font-size: 0.85rem;
 }
 
-.logout-container {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .logout-button {
   background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--header-text);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 6px;
   padding: 0.5rem 1rem;
@@ -269,7 +450,7 @@ html {
 
 /* ===== TODO FORM ===== */
 .todo-form {
-  background-color: transparent;
+  background-color: var(--form-bg);
   padding: 1rem 0;
   margin-bottom: 2rem;
   text-align: left;
@@ -277,15 +458,17 @@ html {
   box-shadow: none;
 }
 
+/* Update the todo form inputs for both themes */
 .todo-form input,
 .todo-form select {
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--form-input-border, var(--auth-input-border));
   border-radius: 6px;
   margin: 5px;
   font-size: 1rem;
-  color: #333;
-  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--form-input-text);
+  background-color: var(--form-input-bg);
+  transition: border-color 0.2s ease, background-color 0.3s ease, box-shadow 0.2s ease;
 }
 
 .todo-form input[type="date"] {
@@ -295,13 +478,14 @@ html {
 .todo-form input:focus,
 .todo-form select:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  background-color: var(--form-input-bg);
 }
 
 .todo-form button {
-  background-color: #4a90e2;
-  color: white;
+  background-color: var(--form-button-bg);
+  color: var(--form-button-text);
   border: none;
   border-radius: 6px;
   padding: 0.75rem 1.5rem;
@@ -312,7 +496,7 @@ html {
 }
 
 .todo-form button:hover {
-  background-color: #3a80d2;
+  background-color: var(--form-button-hover);
 }
 
 /* ===== SORTING CONTROLS ===== */
@@ -320,25 +504,27 @@ html {
   display: flex;
   align-items: center;
   margin-bottom: 1.5rem;
-  background-color: #333; /* Changed from white to dark color */
+  background-color: var(--sort-bg);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transition: background-color 0.3s ease;
 }
 
 .sorting-controls label {
   margin-right: 0.75rem;
   font-weight: 500;
-  color: #fff; /* Changed text color to white */
+  color: var(--sort-text);
 }
 
 .sorting-controls select {
   padding: 0.5rem;
-  border: 1px solid #444;
+  border: 1px solid var(--sort-select-border);
   border-radius: 4px;
-  background-color: #222; /* Dark background */
-  color: #fff; /* White text */
+  background-color: var(--sort-select-bg);
+  color: var(--sort-select-text);
   font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ===== TODO LIST ===== */
@@ -351,39 +537,40 @@ html {
 
 /* ===== TODO CARD ===== */
 .todo-card {
-  background-color: #333; /* Changed from white to dark color */
+  background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px var(--shadow-color);
   padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
   text-align: left;
-  color: #fff; /* White text */
+  color: var(--card-text);
 }
 
 .todo-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .todo-card.completed {
-  background-color: #2a2a2a; /* Darker background for completed */
+  background-color: var(--card-completed-bg);
   border-left: 4px solid #4caf50;
 }
 
 .todo-card.completed h2,
 .todo-card.completed p {
   text-decoration: line-through;
-  color: #aaa; /* Lighter grey text */
+  color: var(--card-completed-text);
 }
 
 .todo-card h2 {
   margin-top: 0;
   margin-bottom: 0.75rem;
   font-size: 1.25rem;
-  color: #fff; /* White text */
+  color: var(--card-text);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: color 0.3s ease;
 }
 
 .priority {
@@ -411,7 +598,8 @@ html {
 
 .todo-card p {
   margin-bottom: 0.75rem;
-  color: #ddd; /* Light grey text */
+  color: var(--card-text);
+  transition: color 0.3s ease;
 }
 
 .todo-card button {
@@ -422,34 +610,38 @@ html {
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .todo-card button:first-of-type {
-  background-color: #4a90e2;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .todo-card button:first-of-type:hover {
-  background-color: #3a80d2;
+  background-color: var(--primary-hover);
 }
 
+/* Enhanced Edit button styling */
 .edit-btn {
-  background-color: #444; /* Darker background */
-  color: #fff; /* White text */
+  background-color: var(--edit-btn-bg);
+  color: white; /* Changed to white for better contrast */
+  font-weight: 500;
 }
 
 .edit-btn:hover {
-  background-color: #555;
+  background-color: var(--edit-btn-hover);
 }
 
+/* Enhanced Delete button styling */
 .delete-btn {
-  background-color: #5a2327; /* Darker red */
-  color: #fff;
+  background-color: var(--delete-btn-bg);
+  color: white; /* Changed to white for better contrast */
+  font-weight: 500;
 }
 
 .delete-btn:hover {
-  background-color: #6a2a2f;
+  background-color: var(--delete-btn-hover);
 }
 
 /* ===== TOAST NOTIFICATIONS ===== */
@@ -464,7 +656,7 @@ html {
   min-height: auto !important;
   margin-bottom: 8px !important;
   border-radius: 4px !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 2px 5px var(--shadow-color) !important;
 }
 
 .toast-body-custom {
@@ -484,6 +676,14 @@ html {
 
   .app-header {
     padding: 1rem;
+  }
+
+  .header-logo img {
+    height: 24px;
+  }
+
+  .header-controls {
+    gap: 0.5rem;
   }
 
   .main-content {
@@ -524,6 +724,18 @@ html {
     padding: 1rem;
   }
 
+  .header-logo {
+    gap: 0.5rem;
+  }
+
+  .header-logo h1 {
+    font-size: 1.2rem;
+  }
+
+  .header-controls {
+    gap: 0.25rem;
+  }
+
   .sorting-controls {
     flex-direction: column;
     align-items: flex-start;
@@ -536,5 +748,23 @@ html {
   .sorting-controls select {
     width: 100%;
   }
+}
+
+/* Add a subtle hover effect for inputs */
+.light-theme .todo-form input:hover,
+.light-theme .todo-form select:hover {
+  background-color: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+/* Update sorting controls to match */
+.light-theme .sorting-controls select {
+  background-color: var(--sort-select-bg);
+  border-color: var(--sort-select-border);
+}
+
+.light-theme .sorting-controls select:hover {
+  background-color: #e8e8e8;
+  border-color: #d0d0d0;
 }
 

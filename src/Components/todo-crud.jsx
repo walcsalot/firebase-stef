@@ -1,9 +1,17 @@
-"use client"
-
 import { useState } from "react"
 import { addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from "../config/firebase"
 import { toast } from "react-toastify"
+
+// Helper function to format dates consistently
+const formatDateOnly = (dateString) => {
+  try {
+    return new Date(dateString).toLocaleDateString()
+  } catch (error) {
+    console.error("Error formatting date:", error)
+    return dateString
+  }
+}
 
 export const TodoCrud = ({ user, todoListCollectionRef, getTodoList, showNotification }) => {
   // State for adding new todos
@@ -143,54 +151,60 @@ export const TodoCrud = ({ user, todoListCollectionRef, getTodoList, showNotific
   )
 
   // Render todo items with edit functionality
-  const renderTodoItem = (todo) => (
-    <div key={todo.id} className={`todo-card ${todo.completed ? "completed" : ""}`} data-todo-id={todo.id}>
-      {editingTodo === todo.id ? (
-        <>
-          <input value={editName} onChange={(e) => setEditName(e.target.value)} />
-          <input value={editDesc} onChange={(e) => setEditDesc(e.target.value)} />
-          <input type="date" value={editExpiry} onChange={(e) => setEditExpiry(e.target.value)} />
-          <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)}>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-          <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
-            <option value="Work">Work</option>
-            <option value="Personal">Personal</option>
-            <option value="Others">Others</option>
-          </select>
-          <button onClick={() => saveEdit(todo.id)}>Save</button>
-          <button onClick={cancelEdit}>Cancel</button>
-        </>
-      ) : (
-        <>
-          <h2>
-            {todo.name} <span className={`priority ${todo.priority.toLowerCase()}`}>{todo.priority}</span>
-          </h2>
-          <p>{todo.description}</p>
-          <p>
-            <strong>Date Added:</strong> {new Date(todo.dateAdded).toLocaleString()}
-          </p>
-          <p>
-            <strong>Expiry Date:</strong> {new Date(todo.expiryDate).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Category:</strong> {todo.category}
-          </p>
-          <button onClick={() => toggleTodoCompletion(todo.id, todo.completed)}>
-            {todo.completed ? "Mark as Incomplete" : "Mark as Complete"}
-          </button>
-          <button className="edit-btn" onClick={() => startEditing(todo)}>
-            Edit
-          </button>
-          <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>
-            Delete
-          </button>
-        </>
-      )}
-    </div>
-  )
+  const renderTodoItem = (todo) => {
+    // Format dates for display
+    const dateAdded = formatDateOnly(todo.dateAdded)
+    const expiryDate = formatDateOnly(todo.expiryDate)
+
+    return (
+      <div key={todo.id} className={`todo-card ${todo.completed ? "completed" : ""}`} data-todo-id={todo.id}>
+        {editingTodo === todo.id ? (
+          <>
+            <input value={editName} onChange={(e) => setEditName(e.target.value)} />
+            <input value={editDesc} onChange={(e) => setEditDesc(e.target.value)} />
+            <input type="date" value={editExpiry} onChange={(e) => setEditExpiry(e.target.value)} />
+            <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)}>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+            <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Others">Others</option>
+            </select>
+            <button onClick={() => saveEdit(todo.id)}>Save</button>
+            <button onClick={cancelEdit}>Cancel</button>
+          </>
+        ) : (
+          <>
+            <h2>
+              {todo.name} <span className={`priority ${todo.priority.toLowerCase()}`}>{todo.priority}</span>
+            </h2>
+            <p>{todo.description}</p>
+            <p>
+              <strong>Date Added:</strong> {dateAdded}
+            </p>
+            <p>
+              <strong>Expiry Date:</strong> {expiryDate}
+            </p>
+            <p>
+              <strong>Category:</strong> {todo.category}
+            </p>
+            <button onClick={() => toggleTodoCompletion(todo.id, todo.completed)}>
+              {todo.completed ? "Mark as Incomplete" : "Mark as Complete"}
+            </button>
+            <button className="edit-btn" onClick={() => startEditing(todo)}>
+              Edit
+            </button>
+            <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>
+              Delete
+            </button>
+          </>
+        )}
+      </div>
+    )
+  }
 
   return {
     renderAddTodoForm,

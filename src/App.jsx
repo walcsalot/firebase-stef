@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import "./App.css"
 import { db, auth } from "./config/firebase"
@@ -11,6 +9,17 @@ import { TodoCrud } from "./Components/todo-crud"
 import { NotificationManager } from "./Components/notifications"
 import { TodoSorter } from "./Components/todo-sorter"
 import { TodoLayout } from "./Components/todo-layout"
+import { ThemeProvider } from "./Components/theme-context"
+
+// Helper function to format dates consistently
+const formatDateOnly = (dateString) => {
+  try {
+    return new Date(dateString).toLocaleDateString()
+  } catch (error) {
+    console.error("Error formatting date:", error)
+    return dateString
+  }
+}
 
 function App() {
   const [todoList, setTodoList] = useState([])
@@ -28,7 +37,18 @@ function App() {
     try {
       const q = query(todoListCollectionRef, where("userId", "==", userId))
       const data = await getDocs(q)
-      setTodoList(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      setTodoList(
+        data.docs.map((doc) => {
+          const data = doc.data()
+          return {
+            id: doc.id,
+            ...data,
+            // Format dates for display if needed
+            formattedDateAdded: formatDateOnly(data.dateAdded),
+            formattedExpiryDate: formatDateOnly(data.expiryDate),
+          }
+        }),
+      )
     } catch (err) {
       console.error("Error fetching todos: ", err)
     }
@@ -97,32 +117,34 @@ function App() {
   const renderTodoContent = () => (
     <>
       {renderAddTodoForm()}
-      <h2>Your Notes</h2>
+      <h2>Note List</h2>
       {renderSortingControls()}
       <div className="todo-list">{getSortedTodos().map((todo) => renderTodoItem(todo))}</div>
     </>
   )
 
   return (
-    <div className="app">
-      <ToastContainer
-        position={getToastPosition()}
-        autoClose={3000}
-        hideProgressBar={isMobile}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        limit={3}
-        className="toast-container-custom"
-        toastClassName="toast-custom"
-        bodyClassName="toast-body-custom"
-      />
-      <TodoLayout user={user}>{renderTodoContent()}</TodoLayout>
-    </div>
+    <ThemeProvider>
+      <div className="app">
+        <ToastContainer
+          position={getToastPosition()}
+          autoClose={3000}
+          hideProgressBar={isMobile}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          limit={3}
+          className="toast-container-custom"
+          toastClassName="toast-custom"
+          bodyClassName="toast-body-custom"
+        />
+        <TodoLayout user={user}>{renderTodoContent()}</TodoLayout>
+      </div>
+    </ThemeProvider>
   )
 }
 
